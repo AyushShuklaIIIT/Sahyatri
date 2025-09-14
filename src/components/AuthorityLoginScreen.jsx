@@ -1,10 +1,32 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Shield, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Shield, AlertTriangle, LoaderCircle } from 'lucide-react';
 
 const AuthorityLoginScreen = ({ setScreen, onLogin }) => {
-  const handleLogin = () => {
-    // In a real app, you would validate the form data
-    onLogin('authority', { name: 'Officer Kumar', department: 'Delhi Police' });
+  const [department, setDepartment] = useState('Bhopal Police');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!department || !username || !password || !twoFactorCode) {
+      setError('Please fill in all fields to continue.');
+      return;
+    }
+
+    setError('');
+    setIsLoading(true);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      onLogin('authority', {
+        name: username,
+        department: department
+      });
+    }, 1500);
   };
 
   return (
@@ -12,11 +34,10 @@ const AuthorityLoginScreen = ({ setScreen, onLogin }) => {
       initial={{ x: '100%' }}
       animate={{ x: 0 }}
       exit={{ x: '100%' }}
-      transition={{ ease: 'easeInOut' }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className="fixed inset-0 bg-white z-40"
     >
       <div className="h-full flex flex-col">
-        {/* Header */}
         <div className="authority-gradient text-white p-6 pb-8">
           <button onClick={() => setScreen('role')} className="mb-6">
             <ArrowLeft className="w-6 h-6" />
@@ -25,9 +46,8 @@ const AuthorityLoginScreen = ({ setScreen, onLogin }) => {
           <p className="text-blue-100">Secure access for authorized personnel</p>
         </div>
 
-        {/* Login Form */}
         <div className="flex-1 p-6 -mt-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl p-6 card-shadow">
+          <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 card-shadow">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
                 <Shield className="w-6 h-6 text-blue-600" />
@@ -41,7 +61,12 @@ const AuthorityLoginScreen = ({ setScreen, onLogin }) => {
             <div className="space-y-4">
               <div>
                 <label htmlFor='department' className="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                <select className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent" id='department'>
+                <select
+                  id='department'
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                >
                   <option>Bhopal Police</option>
                   <option>Tourism Department</option>
                   <option>Emergency Response</option>
@@ -49,23 +74,57 @@ const AuthorityLoginScreen = ({ setScreen, onLogin }) => {
               </div>
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                <input type="text" placeholder="officer.kumar" className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent" id='username' />
+                <input
+                  id='username'
+                  type="text"
+                  placeholder="e.g., officer.shukla"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                />
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                <input type="password" placeholder="••••••••" className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent" id='password' />
+                <input
+                  id='password'
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                />
               </div>
               <div>
                 <label htmlFor="2fa-code" className="block text-sm font-medium text-gray-700 mb-2">2FA Code</label>
-                <input type="text" placeholder="123456" className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent" id='2fa-code' />
+                <input
+                  id='2fa-code'
+                  type="text"
+                  placeholder="123456"
+                  value={twoFactorCode}
+                  onChange={(e) => setTwoFactorCode(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                />
               </div>
-              <button onClick={handleLogin} className="w-full authority-gradient text-white py-3 rounded-xl font-semibold">
-                Secure Login
+
+              {error && <p className="text-sm text-red-600">{error}</p>}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full authority-gradient text-white py-3 rounded-xl font-semibold flex items-center justify-center transition-opacity disabled:opacity-70"
+              >
+                {isLoading ? (
+                  <>
+                    <LoaderCircle className="animate-spin mr-2" />
+                    Verifying...
+                  </>
+                ) : (
+                  'Secure Login'
+                )}
               </button>
             </div>
-          </div>
+          </form>
 
-          {/* Security Notice */}
           <div className="mt-6 p-4 bg-yellow-50 rounded-2xl border border-yellow-200">
             <div className="flex items-start space-x-3">
               <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />

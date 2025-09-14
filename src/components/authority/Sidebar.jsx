@@ -11,14 +11,13 @@ const Sidebar = ({ user, onLogout, activeSection, setActiveSection, isOpen, setI
 
   return (
     <>
-      {/* Overlay for mobile */}
       <div 
         className={`fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden ${isOpen ? 'block' : 'hidden'}`}
         onClick={() => setIsOpen(false)}
       ></div>
 
-      <aside className={`fixed top-0 left-0 h-full w-80 border-r border-gray-200 bg-white flex flex-col z-40 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex-shrink-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        {/* User Profile Section & Close Button */}
+      <aside className={`fixed top-0 left-0 h-full min-h-screen w-80 border-r border-gray-200 bg-white flex flex-col z-40 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex-shrink-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+
         <div className="p-6 border-b border-gray-200 flex justify-between items-start">
           <div>
             <h3 className="font-bold text-gray-900">{user.name}</h3>

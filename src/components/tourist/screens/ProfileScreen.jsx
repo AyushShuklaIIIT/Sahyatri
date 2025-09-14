@@ -41,7 +41,7 @@ const ProfileScreen = ({ user, onLogout }) => {
                     </ul>
                 </div>
 
-                {/* Logout Button Section */}
+                {/* Logout Button */}
                 <div className="mt-6">
                     <button
                         onClick={onLogout}
