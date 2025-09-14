@@ -7,21 +7,21 @@ import AlertsScreen from './screens/AlertsScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import PanicModal from './PanicModal';
 
-const RenderActiveScreen = ({ activeTab, user }) => {
+const RenderActiveScreen = ({ activeTab, user, onLogout }) => {
     switch (activeTab) {
         case 'map':
             return <MapScreen />;
         case 'alerts':
             return <AlertsScreen />;
         case 'profile':
-            return <ProfileScreen user={user} />;
+            return <ProfileScreen user={user} onLogout={onLogout} />;
         case 'home':
         default:
             return <MapScreen />;
     }
 };
 
-const TouristDashboard = ({ user }) => {
+const TouristDashboard = ({ user, onLogout }) => {
     const [activeTab, setActiveTab] = useState('map');
     const [isPanicModalOpen, setisPanicModalOpen] = useState(false);
 
@@ -45,7 +45,7 @@ const TouristDashboard = ({ user }) => {
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <RenderActiveScreen activeTab={activeTab} user={user} />
+                            <RenderActiveScreen activeTab={activeTab} user={user} onLogout={onLogout} />
                         </motion.div>
                     </AnimatePresence>
                 </main>
