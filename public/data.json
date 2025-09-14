@@ -127,5 +127,11 @@
       "type": "Restaurant",
       "coords": [26.8550, 80.9480]
     }
+  ],
+  "points": [
+    { "id": 1, "position": [23.293173, 77.403502], "popup": "Arjun Gupta" },
+    { "id": 2, "position": [23.291543, 77.323860], "popup": "Ram Ratan" },
+    { "id": 3, "position": [23.217519, 77.408548], "popup": "Ram Ratan" },
+    { "id": 4, "position": [23.117119, 77.418948], "popup": "Ram Ratan" }
   ]
 }

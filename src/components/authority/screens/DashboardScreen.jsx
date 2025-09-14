@@ -1,4 +1,5 @@
 import { Users, Siren, ShieldCheck, Timer } from 'lucide-react';
+import AdminMap from '../../map/adminmap';
 
 const StatCard = ({ title, value, change, icon: Icon, color }) => (
     <div className='bg-white rounded-2xl p-6 card-shadow'>
@@ -36,7 +37,7 @@ const DashboardScreen = () => {
                     </div>
                 </div>
                 <div className='map-container h-96 rounded-xl relative text-gray-800 flex items-center justify-center'>
-                    Insert tourist map here
+                    <AdminMap />
                 </div>
             </div>
         </div>
