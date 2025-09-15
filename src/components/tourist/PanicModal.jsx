@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
 import { Siren } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const PanicModal = ({ onClose }) => {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -18,11 +21,11 @@ const PanicModal = ({ onClose }) => {
         <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <Siren className="w-10 h-10 text-red-600" />
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2">Emergency Alert Activated!</h3>
-        <p className="text-gray-600 mb-6">Authorities and emergency contacts have been notified.</p>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">{t('emergency.title')}</h3>
+        <p className="text-gray-600 mb-6">{t('emergency.message')}</p>
         <div className="space-y-3">
-          <button className="w-full danger-gradient text-white py-3 rounded-xl font-semibold">Call Emergency: 112</button>
-          <button onClick={onClose} className="w-full bg-gray-200 text-gray-800 py-3 rounded-xl font-semibold">Cancel Alert</button>
+          <button className="w-full danger-gradient text-white py-3 rounded-xl font-semibold">{t('emergency.call')}</button>
+          <button onClick={onClose} className="w-full bg-gray-200 text-gray-800 py-3 rounded-xl font-semibold">{t('emergency.cancel')}</button>
         </div>
       </motion.div>
     </motion.div>

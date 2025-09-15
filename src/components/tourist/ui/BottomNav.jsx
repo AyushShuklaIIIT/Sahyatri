@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Map, Bell, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const NavItem = ({ icon: Icon, label, isActive, onClick }) => {
     return (
@@ -16,10 +17,11 @@ const NavItem = ({ icon: Icon, label, isActive, onClick }) => {
 };
 
 const BottomNav = ({ activeTab, onTabChange }) => {
+    const { t } = useTranslation();
     const navItems = [
-        { id: 'map', label: 'Map', icon: Map },
-        { id: 'alerts', label: 'Alerts', icon: Bell },
-        { id: 'profile', label: 'Profile', icon: User },
+        { id: 'map', label: t('nav.map'), icon: Map },
+        { id: 'alerts', label: t('nav.alerts'), icon: Bell },
+        { id: 'profile', label: t('nav.profile'), icon: User },
     ];
 
     return (

@@ -1,27 +1,46 @@
 import { UserCog, ShieldCheck, Bell, LifeBuoy, LogOut, ChevronRight } from "lucide-react";
 import { useAuth0 } from '@auth0/auth0-react';
+import LanguageSwitcher from '../../ui/LanguageSwitcher';
+import { useTranslation } from "react-i18next";
 
-const ProfileScreen = ({ user }) => {
-    const { logout } = useAuth0();
+const getInitials = (name = '') => {
+    const words = name.trim().split(' ');
+    if (words.length === 1) return words[0].substring(0, 2).toUpperCase();
+    return (words[0][0] + (words[words.length - 1][0] || '')).toUpperCase();
+};
+
+const ProfileScreen = () => {
+    const { user, logout } = useAuth0();
+    const { t } = useTranslation();
 
     const menuItems = [
-        { icon: UserCog, label: "Edit Profile" },
-        { icon: ShieldCheck, label: "Emergency Contacts" },
-        { icon: Bell, label: "Notification Settings" },
-        { icon: LifeBuoy, label: "Help & Support" },
+        { icon: UserCog, label: t('profile.edit_profile') },
+        { icon: ShieldCheck, label: t('profile.emergency_contacts') },
+        { icon: Bell, label: t('profile.settings') },
+        { icon: LifeBuoy, label: t('profile.help_support') },
     ];
+
+    if (!user) {
+        return <div className="flex items-center justify-center min-h-screen">{t('loading')}</div>;
+    }
+
+    const initials = getInitials(user.name);
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
             {/* Header Section */}
             <header className="bg-white p-6 shadow-sm">
                 <div className="flex items-center space-x-4">
+                {user.picture ? (
+                    <img src={user.picture} alt={`Profile of ${user.name}`} className="w-20 h-20 rounded-full ring-4 ring-gray-300 object-cover" />
+                ) : (
                     <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center ring-4 ring-gray-300">
-                        <span className="text-3xl font-bold text-gray-600">{user.initials}</span>
+                        <span className="text-3xl font-bold text-gray-600">{initials}</span>
                     </div>
+                )}
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800">{user.name}</h1>
-                        <p className="text-gray-500 text-sm">ID: {user.id}</p>
+                        <p className="text-gray-500 text-sm">ID: {user.sub}</p>
                     </div>
                 </div>
             </header>
@@ -44,14 +63,17 @@ const ProfileScreen = ({ user }) => {
                     </ul>
                 </div>
 
-                {/* Logout Button */}
+                <div className="mt-6">
+                    <LanguageSwitcher />
+                </div>
+
                 <div className="mt-6">
                     <button
                         onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
                         className="w-full flex items-center justify-center space-x-3 bg-white p-4 rounded-2xl card-shadow text-red-500 font-bold hover:bg-red-50 active:scale-95 transition-all"
                     >
                         <LogOut className="w-6 h-6" />
-                        <span>Logout</span>
+                        <span>{t('profile.logout')}</span>
                     </button>
                 </div>
             </div>

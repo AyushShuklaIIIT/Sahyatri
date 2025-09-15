@@ -1,0 +1,42 @@
+{
+  "welcome_title": "Welcome to Sahyatri",
+  "access_level": "Choose your access level",
+  "select_language": "Select Language",
+  "tourist": {
+    "title": "Tourist",
+    "description": "Personal safety & emergency assistance"
+  },
+  "authority": {
+    "title": "Authority",
+    "description": "Police, Tourism Dept & Emergency Response"
+  },
+  "tags": {
+    "digital_id": "Digital ID",
+    "panic_button": "Panic Button",
+    "e-fir": "E-FIR",
+    "monitoring": "Monitoring"
+  },
+  "profile": {
+    "edit_profile": "Edit Profile",
+    "emergency_contacts": "Emergency Contacts",
+    "settings": "Notification Settings",
+    "help_support": "Help & Support",
+    "logout": "Logout"
+  },
+  "loading": "Loading...",
+  "emergency": {
+    "title": "Emergency Alert Activated!",
+    "message": "Authorities and emergency contacts have been notified.",
+    "call": "Call Emergency: 112",
+    "cancel": "Cancel Alert"
+  },
+  "alerts": {
+    "title": "Notifications & Alerts",
+    "message": "A list of all recent safety alerts, weather updates, and system notifications would appear here."
+  },
+  "nav": {
+    "map": "Map",
+    "alerts": "Alerts",
+    "profile": "Profile"
+  }
+}
