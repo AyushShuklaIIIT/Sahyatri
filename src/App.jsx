@@ -1,40 +1,62 @@
 import { useAuth0 } from '@auth0/auth0-react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import TouristDashboard from './components/tourist/TouristDashboard';
 import AuthorityDashboard from './components/authority/AuthorityDashboard';
-import LoginScreen from './components/LoginScreen';
 import SplashScreen from './components/SplashScreen';
+import RoleSelectionScreen from './components/RoleSelectionScreen';
+import PermissionDeniedScreen from './components/PermissionDeniedScreen';
 
 const App = () => {
   const { isAuthenticated, isLoading, user } = useAuth0();
+  const [permissionError, setPermissionError] = useState(false);
 
-  if (isLoading) {
-    return <SplashScreen />;
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      const intendedRole = sessionStorage.getItem('intendedRole');
+      sessionStorage.removeItem('intendedRole');
+
+      const namespace = 'https://sahyatri-ten.vercel.app';
+      const actualRoles = user?.[`${namespace}/roles`] || [];
+      const isAuthority = actualRoles.includes('Authority');
+
+      if (intendedRole === 'Authority' && !isAuthority) {
+        setPermissionError(true);
+      }
+    }
+  }, [isAuthenticated, user]);
 
   const renderContent = () => {
-    if (!isAuthenticated) {
-      return <LoginScreen key="login" />;
+    if (isLoading) {
+      return <SplashScreen key="splash" />;
     }
 
-    const namespace = 'https://sahyatri-ten.vercel.app';
-    const roles = user?.[`${namespace}/roles`] || [];
-    const isAuthority = roles.includes('Authority');
-
-    if (isAuthority) {
-      return <AuthorityDashboard user={user} key="authority" />;
-    } else {
-      return <TouristDashboard user={user} key="tourist" />;
+    if (permissionError) {
+      return <PermissionDeniedScreen key="permission-denied" />;
     }
+
+    if (isAuthenticated) {
+      const namespace = 'https://sahyatri-ten.vercel.app';
+      const actualRoles = user?.[`${namespace}/roles`] || [];
+      const isAuthority = actualRoles.includes('Authority');
+
+      if (isAuthority) {
+        return <AuthorityDashboard user={user} key="authority-dashboard" />;
+      } else {
+        return <TouristDashboard user={user} key="tourist-dashboard" />;
+      }
+    }
+
+    return <RoleSelectionScreen key="role-selection" />;
   };
 
   return (
-    <div id='app' className='min-h-screen'>
+    <div className='min-h-screen bg-gray-50'>
       <AnimatePresence mode='wait'>
         {renderContent()}
       </AnimatePresence>
     </div>
-  )
+  );
 };
 
 export default App;

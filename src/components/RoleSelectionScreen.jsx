@@ -1,7 +1,18 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, ShieldCheck, ChevronRight, Star } from 'lucide-react';
+import { User, ShieldCheck, ChevronRight, Star, LoaderCircle } from 'lucide-react';
+import { useAuth0 } from '@auth0/auth0-react';
 
-const RoleSelectionScreen = ({ setScreen }) => {
+const RoleSelectionScreen = () => {
+  const { loginWithRedirect } = useAuth0();
+  const [loadingRole, setLoadingRole] = useState(null);
+
+  const handleLogin = (intendedRole) => {
+    setLoadingRole(intendedRole);
+    sessionStorage.setItem('intendedRole', intendedRole);
+    loginWithRedirect();
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -17,15 +28,15 @@ const RoleSelectionScreen = ({ setScreen }) => {
           <h2 className="text-2xl font-bold mb-2">Welcome to Sahyatri</h2>
           <p className="text-blue-100">Choose your access level</p>
         </div>
-        
+
         <div className="flex-1 p-6 -mt-6">
           <div className="space-y-4">
             {/* Tourist Role Card */}
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setScreen('touristLogin')}
-              className="bg-white rounded-2xl p-6 card-shadow cursor-pointer hover:shadow-lg transition-shadow"
+              whileHover={{ scale: loadingRole ? 1 : 1.02 }}
+              whileTap={{ scale: loadingRole ? 1 : 0.98 }}
+              onClick={() => !loadingRole && handleLogin('Tourist')}
+              className={`bg-white rounded-2xl p-6 card-shadow transition-all ${loadingRole ? 'cursor-wait opacity-70' : 'cursor-pointer hover:shadow-lg'}`}
             >
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center">
@@ -39,16 +50,20 @@ const RoleSelectionScreen = ({ setScreen }) => {
                     <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Panic Button</span>
                   </div>
                 </div>
-                <ChevronRight className="w-6 h-6 text-gray-400" />
+                {loadingRole === 'Tourist' ? (
+                  <LoaderCircle className='w-6 h-6 text-gray-400 animate-spin' />
+                ) : (
+                  <ChevronRight className="w-6 h-6 text-gray-400" />
+                )}
               </div>
             </motion.div>
 
             {/* Authority Role Card */}
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setScreen('authorityLogin')}
-              className="bg-white rounded-2xl p-6 card-shadow cursor-pointer hover:shadow-lg transition-shadow"
+              whileHover={{ scale: loadingRole ? 1 : 1.02 }}
+              whileTap={{ scale: loadingRole ? 1 : 0.98 }}
+              onClick={() => !loadingRole && handleLogin('Authority')}
+              className={`bg-white rounded-2xl p-6 card-shadow transition-all ${loadingRole ? 'cursor-wait opacity-70' : 'cursor-pointer hover:shadow-lg'}`}
             >
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center">
@@ -62,7 +77,11 @@ const RoleSelectionScreen = ({ setScreen }) => {
                     <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">Monitoring</span>
                   </div>
                 </div>
-                <ChevronRight className="w-6 h-6 text-gray-400" />
+                {loadingRole === 'Authority' ? (
+                  <LoaderCircle className='w-6 h-6 text-gray-400 animate-spin' />
+                ) : (
+                  <ChevronRight className="w-6 h-6 text-gray-400" />
+                )}
               </div>
             </motion.div>
           </div>
@@ -70,8 +89,8 @@ const RoleSelectionScreen = ({ setScreen }) => {
           <div className='mt-8 p-4 bg-gray-50 rounded-2xl'>
             <p className='text-sm font-medium text-gray-700 mb-3'>Select Language / भाषा चुनें</p>
             <div className='flex flex-wrap gap-2'>
-                <button className='px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium'>English</button>
-                <button className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm'>हिंदी</button>
+              <button className='px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium'>English</button>
+              <button className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm'>हिंदी</button>
             </div>
           </div>
         </div>
