@@ -13,6 +13,11 @@ const App = () => {
   const [intendedRole, setIntendedRole] = useState(null);
   const [isUserSynced, setIsUserSynced] = useState(false);
 
+  // PWA install state
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
+
+  // Sync user
   useEffect(() => {
     const syncUser = async () => {
       if (isAuthenticated && !isUserSynced) {
@@ -25,7 +30,6 @@ const App = () => {
               'Content-Type': 'application/json'
             },
           });
-          console.log('User synced successfully!');
           setIsUserSynced(true);
         } catch (e) {
           console.error('Error syncing user:', e);
@@ -34,9 +38,8 @@ const App = () => {
     };
     syncUser();
   }, [isAuthenticated, getAccessTokenSilently, isUserSynced]);
-  
 
-
+  // Role & permission
   useEffect(() => {
     if (isAuthenticated) {
       if (!intendedRole) {
@@ -56,44 +59,69 @@ const App = () => {
     }
   }, [isAuthenticated, user, intendedRole]);
 
+  // PWA beforeinstallprompt — store for later
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault(); // Prevent automatic prompt
+      setDeferredPrompt(e);
+      setShowInstallBtn(true);
+      console.log('beforeinstallprompt fired', e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const choiceResult = await deferredPrompt.userChoice;
+    console.log('User choice for PWA install:', choiceResult.outcome); // accepted or dismissed
+
+    // Hide install button after user choice
+    setShowInstallBtn(false);
+    setDeferredPrompt(null);
+  };
+
   const renderContent = () => {
-    if (isLoading) {
-      return <SplashScreen key="splash" />;
-    }
-
-    if (permissionError) {
-      return <PermissionDeniedScreen key="permission-denied" />;
-    }
-
+    if (isLoading) return <SplashScreen key="splash" />;
+    if (permissionError) return <PermissionDeniedScreen key="permission-denied" />;
     if (isAuthenticated) {
       const namespace = 'https://sahyatri-ten.vercel.app';
       const actualRoles = user?.[`${namespace}/roles`] || [];
       const isAuthority = actualRoles.includes('Authority');
 
-      // If intendedRole is Tourist, always show TouristDashboard
-      if (intendedRole === 'Tourist') {
-        return <TouristDashboard user={user} key="tourist-dashboard" />;
-      }
-      // If intendedRole is Authority and user has Authority role
-      if (intendedRole === 'Authority' && isAuthority) {
-        return <AuthorityDashboard user={user} key="authority-dashboard" />;
-      }
-      // If no intendedRole, fallback to actual role
-      if (isAuthority) {
-        return <AuthorityDashboard user={user} key="authority-dashboard" />;
-      } else {
-        return <TouristDashboard user={user} key="tourist-dashboard" />;
-      }
+      if (intendedRole === 'Tourist') return <TouristDashboard user={user} key="tourist-dashboard" />;
+      if (intendedRole === 'Authority' && isAuthority) return <AuthorityDashboard user={user} key="authority-dashboard" />;
+      return isAuthority ? <AuthorityDashboard user={user} key="authority-dashboard" /> : <TouristDashboard user={user} key="tourist-dashboard" />;
     }
-
     return <RoleSelectionScreen key="role-selection" />;
   };
 
   return (
-    <div className='min-h-screen bg-gray-50'>
-      <AnimatePresence mode='wait'>
+    <div className="min-h-screen bg-gray-50 relative flex flex-col">
+      <AnimatePresence mode="wait">
         {renderContent()}
       </AnimatePresence>
+
+      {/* Install App Button */}
+      {showInstallBtn && (
+  <div className="relative min-h-screen">
+    <div className="absolute bottom-4 right-4 z-[9999]">
+      <button
+        onClick={handleInstall}
+        className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition"
+      >
+        Install App
+      </button>
+    </div>
+  </div>
+)}
+
+
+      
     </div>
   );
 };
