@@ -7,6 +7,7 @@ import AlertsScreen from './screens/AlertsScreen';
 import TouristsScreen from './screens/TouristsScreen';
 import EfirScreen from './screens/EfirScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const RenderActiveScreen = ({ activeSection, user }) => {
     switch (activeSection) {
@@ -24,9 +25,10 @@ const RenderActiveScreen = ({ activeSection, user }) => {
     }
 };
 
-const AuthorityDashboard = ({ user, onLogout }) => {
+const AuthorityDashboard = () => {
+    const { user } = useAuth0();
     const [activeSection, setActiveSection] = useState('dashboard');
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
+    const [isSidebarOpen, setisSidebarOpen] = useState(false);
     
     return (
         <motion.div
@@ -36,12 +38,11 @@ const AuthorityDashboard = ({ user, onLogout }) => {
             className="flex min-h-screen bg-gray-50"
         >
             <Sidebar 
-                user={user} 
-                onLogout={onLogout} 
+                user={user}
                 activeSection={activeSection} 
                 setActiveSection={setActiveSection}
                 isOpen={isSidebarOpen}
-                setIsOpen={setSidebarOpen}
+                setIsOpen={setisSidebarOpen}
             />
             
             <div className="flex-1 flex flex-col">
@@ -55,7 +56,7 @@ const AuthorityDashboard = ({ user, onLogout }) => {
                             <span className='text-sm font-medium'>System Online</span>
                         </div>
                         <button 
-                            onClick={() => setSidebarOpen(true)} 
+                            onClick={() => setisSidebarOpen(true)} 
                             className="md:hidden p-2 -mr-2"
                         >
                             <Menu className="w-6 h-6 text-gray-700" />

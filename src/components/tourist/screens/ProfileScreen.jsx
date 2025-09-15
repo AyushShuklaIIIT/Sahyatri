@@ -1,6 +1,9 @@
 import { UserCog, ShieldCheck, Bell, LifeBuoy, LogOut, ChevronRight } from "lucide-react";
+import { useAuth0 } from '@auth0/auth0-react';
 
-const ProfileScreen = ({ user, onLogout }) => {
+const ProfileScreen = ({ user }) => {
+    const { logout } = useAuth0();
+
     const menuItems = [
         { icon: UserCog, label: "Edit Profile" },
         { icon: ShieldCheck, label: "Emergency Contacts" },
@@ -27,8 +30,8 @@ const ProfileScreen = ({ user, onLogout }) => {
                 <div className="bg-white rounded-2xl p-2 card-shadow">
                     <ul className="divide-y divide-gray-100">
                         {menuItems.map((item) => (
-                            <li 
-                                key={item.label} 
+                            <li
+                                key={item.label}
                                 className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
                             >
                                 <div className="flex items-center space-x-4">
@@ -44,7 +47,7 @@ const ProfileScreen = ({ user, onLogout }) => {
                 {/* Logout Button */}
                 <div className="mt-6">
                     <button
-                        onClick={onLogout}
+                        onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
                         className="w-full flex items-center justify-center space-x-3 bg-white p-4 rounded-2xl card-shadow text-red-500 font-bold hover:bg-red-50 active:scale-95 transition-all"
                     >
                         <LogOut className="w-6 h-6" />

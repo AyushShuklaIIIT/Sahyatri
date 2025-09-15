@@ -1,6 +1,8 @@
 import { LayoutDashboard, Bell, Users, FileText, Settings, LogOut, X } from 'lucide-react';
+import { useAuth0 } from '@auth0/auth0-react';
 
-const Sidebar = ({ user, onLogout, activeSection, setActiveSection, isOpen, setIsOpen }) => {
+const Sidebar = ({ user, activeSection, setActiveSection, isOpen, setIsOpen }) => {
+    const { logout } = useAuth0();
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'alerts', label: 'AI Alerts', icon: Bell },
@@ -51,7 +53,7 @@ const Sidebar = ({ user, onLogout, activeSection, setActiveSection, isOpen, setI
         </nav>
 
         <div className="p-4">
-          <button onClick={onLogout} className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl">
+          <button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })} className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl">
             <LogOut className="w-5 h-5" />
             <span>Logout</span>
           </button>
