@@ -14,23 +14,16 @@ L.Icon.Default.mergeOptions({
   shadowUrl,
 });
 
-export default function PointsMap() {
+export default function AdminMap() {
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
+  const markersRef = useRef([]);
   const [points, setPoints] = useState([]);
 
-  // fetch JSON points
-  useEffect(() => {
-    fetch("/data.json")
-      .then((res) => res.json())
-      .then((json) => setPoints(json.points))
-      .catch((err) => console.error(err));
-  }, []);
-
+  // initialize map
   useEffect(() => {
     if (!mapRef.current || leafletMapRef.current) return;
 
-    // init map with some default center
     const map = L.map(mapRef.current).setView([23.217319, 77.408748], 13);
     leafletMapRef.current = map;
 
@@ -38,31 +31,43 @@ export default function PointsMap() {
       maxZoom: 19,
     }).addTo(map);
 
-    // watch user location and center map there (no marker shown)
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        map.setView([lat, lng], map.getZoom());
-      },
-      (err) => console.error(err),
-      { enableHighAccuracy: true }
-    );
-
     return () => {
-      navigator.geolocation.clearWatch(watchId);
       map.remove();
       leafletMapRef.current = null;
     };
   }, []);
 
-  // add markers when points change
+  // fetch points every second
+  useEffect(() => {
+    const fetchPoints = async () => {
+      try {
+        const res = await fetch("/data.json");
+        const json = await res.json();
+        setPoints(json.points || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchPoints(); // initial fetch
+    const interval = setInterval(fetchPoints, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // update markers whenever points change
   useEffect(() => {
     const map = leafletMapRef.current;
-    if (!map || !points.length) return;
+    if (!map) return;
 
+    // remove old markers
+    markersRef.current.forEach((m) => map.removeLayer(m));
+    markersRef.current = [];
+
+    // add new markers
     points.forEach((p) => {
-      L.marker(p.position).addTo(map).bindPopup(p.popup);
+      const marker = L.marker(p.position).addTo(map).bindPopup(p.popup);
+      markersRef.current.push(marker);
     });
   }, [points]);
 

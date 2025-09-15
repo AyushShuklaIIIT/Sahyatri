@@ -20,6 +20,7 @@ export default function LiveMap({ mode = "both" }) {
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
   const [data, setData] = useState(null);
+  const focusRef = useRef(false);
 
 
   useEffect(() => {
@@ -91,8 +92,12 @@ export default function LiveMap({ mode = "both" }) {
 
         userMarker.setLatLng([lat, lng]);
         accuracyCircle.setLatLng([lat, lng]).setRadius(acc);
-
-        map.setView([lat, lng], map.getZoom());
+        
+        // Allow only focus one time
+        if (!focusRef.current) {
+          map.setView([lat, lng], map.getZoom());
+          focusRef.current = true;
+        }
 
         checkZones(lat, lng);
       },
