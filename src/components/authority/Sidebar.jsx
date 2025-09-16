@@ -15,11 +15,11 @@ const Sidebar = ({ user, activeSection, setActiveSection, isOpen, setIsOpen }) =
   return (
     <>
       <div 
-        className={`fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden ${isOpen ? 'block' : 'hidden'}`}
+        className={`fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden ${isOpen ? 'block' : 'hidden'}`}
         onClick={() => setIsOpen(false)}
       ></div>
 
-      <aside className={`fixed top-0 left-0 h-full min-h-screen w-80 border-r border-gray-200 bg-white flex flex-col z-40 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex-shrink-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed top-0 left-0 h-full min-h-screen w-80 border-r border-gray-200 bg-white flex flex-col z-50 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex-shrink-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
 
         <div className="p-6 border-b border-gray-200 flex justify-between items-start">
           <div>
