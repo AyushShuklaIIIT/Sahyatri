@@ -1,6 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Download, X } from 'lucide-react';
 import TouristDashboard from './components/tourist/TouristDashboard';
 import AuthorityDashboard from './components/authority/AuthorityDashboard';
 import SplashScreen from './components/SplashScreen';
@@ -12,12 +13,9 @@ const App = () => {
   const [permissionError, setPermissionError] = useState(false);
   const [intendedRole, setIntendedRole] = useState(null);
   const [isUserSynced, setIsUserSynced] = useState(false);
-
-  // PWA install state
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
 
-  // Sync user
   useEffect(() => {
     const syncUser = async () => {
       if (isAuthenticated && !isUserSynced) {
@@ -39,7 +37,6 @@ const App = () => {
     syncUser();
   }, [isAuthenticated, getAccessTokenSilently, isUserSynced]);
 
-  // Role & permission
   useEffect(() => {
     if (isAuthenticated) {
       if (!intendedRole) {
@@ -59,10 +56,9 @@ const App = () => {
     }
   }, [isAuthenticated, user, intendedRole]);
 
-  // PWA beforeinstallprompt — store for later
   useEffect(() => {
     const handler = (e) => {
-      e.preventDefault(); // Prevent automatic prompt
+      e.preventDefault(); 
       setDeferredPrompt(e);
       setShowInstallBtn(true);
       console.log('beforeinstallprompt fired', e);
@@ -78,9 +74,7 @@ const App = () => {
 
     deferredPrompt.prompt();
     const choiceResult = await deferredPrompt.userChoice;
-    console.log('User choice for PWA install:', choiceResult.outcome); // accepted or dismissed
-
-    // Hide install button after user choice
+    console.log('User choice for PWA install:', choiceResult.outcome); 
     setShowInstallBtn(false);
     setDeferredPrompt(null);
   };
@@ -106,22 +100,36 @@ const App = () => {
         {renderContent()}
       </AnimatePresence>
 
-      {/* Install App Button */}
-      {showInstallBtn && (
-  <div className="relative min-h-screen">
-    <div className="absolute bottom-4 right-4 z-[9999]">
-      <button
-        onClick={handleInstall}
-        className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition"
-      >
-        Install App
-      </button>
-    </div>
-  </div>
-)}
-
-
-      
+      <AnimatePresence>
+        {showInstallBtn && (
+          <motion.div
+            key="install-banner"
+            className='fixed bottom-4 left-4 w-auto max-w-sm z-50'
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+          >
+            <div className='bg-slate-800 text-white p-4 rounded-xl shadow-lg flex items-center justify-between'>
+              <div className='flex items-center space-x-3'>
+                <Download className='w-6 h-6 text-blue-400' />
+                <div>
+                  <p className='font-semibold text-sm'>Install Sahyatri App</p>
+                  <p className='text-slate-300 text-xs'>Get a better experience</p>
+                </div>
+              </div>
+              <div className='flex items-center space-x-2'>
+                <button onClick={() => setShowInstallBtn(false)} className='p-2 text-slate-400 hover:text-white'>
+                  <X className='w-5 h-5' />
+                </button>
+                <button onClick={handleInstall} className='px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition'>
+                  Install
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
