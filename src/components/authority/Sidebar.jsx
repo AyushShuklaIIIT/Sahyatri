@@ -15,7 +15,7 @@ const Sidebar = ({ user, activeSection, setActiveSection, isOpen, setIsOpen }) =
   return (
     <>
       <div 
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden ${isOpen ? 'block' : 'hidden'}`}
+        className={`fixed inset-0 bg-gray-600 bg-opacity-50 z-40 md:hidden ${isOpen ? 'block' : 'hidden'}`}
         onClick={() => setIsOpen(false)}
       ></div>
 
