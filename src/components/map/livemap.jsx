@@ -22,6 +22,14 @@ export default function LiveMap({ mode = "both" }) {
   const [data, setData] = useState(null);
   const focusRef = useRef(false);
 
+  const getPlaceIcon = (iconUrl) => {
+  return L.icon({
+    iconUrl,
+    iconSize: [30, 30],        // size of the icon
+    iconAnchor: [15, 30],      // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -30]      // point from which the popup should open relative to the iconAnchor
+  });
+};
 
   useEffect(() => {
     // Fetch JSON data
@@ -68,7 +76,8 @@ export default function LiveMap({ mode = "both" }) {
     // ADD PLACES
     if (mode === "places" || mode === "both") {
       data.places.forEach((p) => {
-        L.marker(p.coords)
+        const icon = getPlaceIcon(p.icon);
+        L.marker(p.coords, { icon })
           .addTo(map)
           .bindPopup(`<b>${p.name}</b><br>Type: ${p.type}`);
       });
@@ -143,5 +152,5 @@ export default function LiveMap({ mode = "both" }) {
     };
   }, [data, mode]);
 
-  return <div ref={mapRef} style={{ width: "100%", height: "100%" }} ></div>;
+  return <div ref={mapRef} style={{ width: "100%", height: "100%" }}></div>;
 }

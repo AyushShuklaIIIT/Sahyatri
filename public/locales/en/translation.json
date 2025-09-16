@@ -17,7 +17,7 @@
     "monitoring": "Monitoring"
   },
   "profile": {
-    "edit_profile": "Edit Profile",
+    "complaint": "File a Complaint",
     "emergency_contacts": "Emergency Contacts",
     "settings": "Notification Settings",
     "help_support": "Help & Support",
@@ -31,12 +31,18 @@
     "cancel": "Cancel Alert"
   },
   "alerts": {
-    "title": "Notifications & Alerts",
-    "message": "A list of all recent safety alerts, weather updates, and system notifications would appear here."
+    "title": "Notifications",
+    "danger_title": "Safety Warning",
+    "danger_message": "You are entering a restricted high-risk zone. Please avoid this area.",
+    "weather_title": "Weather Update",
+    "weather_message": "Moderate rainfall expected in the afternoon. Plan your travel accordingly.",
+    "info_title": "Event Information",
+    "info_message": "The evening light and sound show at Yodhasthal, Bhopal is scheduled for 7:15 PM today."
   },
   "nav": {
     "map": "Map",
     "alerts": "Alerts",
-    "profile": "Profile"
+    "profile": "Profile",
+    "nearby": "Nearby"
   }
 }

@@ -36,7 +36,7 @@ const DashboardScreen = () => {
                         <button className='px-4 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium'>Alerts</button>
                     </div>
                 </div>
-                <div className='map-container h-96 rounded-xl relative text-gray-800 flex items-center justify-center'>
+                <div className='map-container h-96 rounded-xl relative text-gray-800 flex items-center justify-center z-0'>
                     <AdminMap />
                 </div>
             </div>

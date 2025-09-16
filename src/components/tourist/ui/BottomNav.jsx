@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Map, Bell, User } from 'lucide-react';
+import { Map, Bell, User, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const NavItem = ({ icon: Icon, label, isActive, onClick }) => {
@@ -20,12 +20,13 @@ const BottomNav = ({ activeTab, onTabChange }) => {
     const { t } = useTranslation();
     const navItems = [
         { id: 'map', label: t('nav.map'), icon: Map },
+        { id: 'nearby', label: t('nav.nearby'), icon: MapPin },
         { id: 'alerts', label: t('nav.alerts'), icon: Bell },
         { id: 'profile', label: t('nav.profile'), icon: User },
     ];
 
     return (
-        <footer className="fixed bottom-0 left-0 w-full z-30 md:left-1/2 md:transform md:-translate-x-1/2">
+        <footer className="fixed bottom-0 left-0 w-full z-50 md:left-1/2 md:transform md:-translate-x-1/2">
             <motion.div
                 initial={{ y: 100 }}
                 animate={{ y: 0 }}

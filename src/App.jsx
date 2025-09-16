@@ -14,14 +14,15 @@ const App = () => {
   const [intendedRole, setIntendedRole] = useState(null);
   const [isUserSynced, setIsUserSynced] = useState(false);
 
+
   // Splash state (minimum display time)
   const [showSplash, setShowSplash] = useState(true);
 
   // PWA install state
+
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
 
-  // Sync user
   useEffect(() => {
     const syncUser = async () => {
       if (isAuthenticated && !isUserSynced) {
@@ -43,7 +44,6 @@ const App = () => {
     syncUser();
   }, [isAuthenticated, getAccessTokenSilently, isUserSynced]);
 
-  // Role & permission
   useEffect(() => {
     if (isAuthenticated) {
       if (!intendedRole) {
@@ -63,10 +63,9 @@ const App = () => {
     }
   }, [isAuthenticated, user, intendedRole]);
 
-  // PWA beforeinstallprompt — store for later
   useEffect(() => {
     const handler = (e) => {
-      e.preventDefault(); // Prevent automatic prompt
+      e.preventDefault(); 
       setDeferredPrompt(e);
       setShowInstallBtn(true);
       console.log('beforeinstallprompt fired', e);
@@ -82,7 +81,11 @@ const App = () => {
 
     deferredPrompt.prompt();
     const choiceResult = await deferredPrompt.userChoice;
+
     console.log('User choice for PWA install:', choiceResult.outcome);
+
+
+    console.log('User choice for PWA install:', choiceResult.outcome); 
 
     setShowInstallBtn(false);
     setDeferredPrompt(null);
