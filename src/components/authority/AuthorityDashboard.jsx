@@ -9,6 +9,7 @@ import EfirScreen from './screens/EfirScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ZoneControlScreen from './screens/ZoneControlScreen';
 import { useAuth0 } from '@auth0/auth0-react';
+import ChangeZone from './screens/change-zone';
 
 const RenderActiveScreen = ({ activeSection, user }) => {
     switch (activeSection) {
@@ -20,8 +21,8 @@ const RenderActiveScreen = ({ activeSection, user }) => {
             return <EfirScreen />;
         case 'settings':
             return <SettingsScreen user={user} />;
-        case 'zoneControl':
-            return <ZoneControlScreen />;
+        case 'change zone':
+            return <ChangeZone />;
         case 'dashboard':
         default:
             return <DashboardScreen />;

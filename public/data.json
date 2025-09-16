@@ -105,27 +105,32 @@
     {
       "name": "Indra Garden",
       "type": "Park",
-      "coords": [26.204694, 81.251379]
+      "coords": [26.204694, 81.251379],
+      "icon": "https://thumbs.dreamstime.com/z/pin-location-icon-vector-iconic-design-symbol-transparency-grid-94181514.jpg?ct=jpeg"
     },
     {
       "name": "Saheed Smarak",
       "type": "Tourist Spot",
-      "coords": [26.202021, 81.247152]
+      "coords": [26.202021, 81.247152],
+      "icon": "https://thumbs.dreamstime.com/z/pin-location-icon-vector-iconic-design-symbol-transparency-grid-94181514.jpg?ct=jpeg"
     },
     {
       "name": "Janeshwar Mishra Park",
       "type": "Park",
-      "coords": [26.8700, 80.9800]
+      "coords": [26.8700, 80.9800],
+      "icon": "https://thumbs.dreamstime.com/z/pin-location-icon-vector-iconic-design-symbol-transparency-grid-94181514.jpg?ct=jpeg"
     },
     {
       "name": "Hotel Taj",
       "type": "Hotel",
-      "coords": [26.8500, 80.9490]
+      "coords": [26.8500, 80.9490],
+      "icon": "https://thumbs.dreamstime.com/z/pin-location-icon-vector-iconic-design-symbol-transparency-grid-94181514.jpg?ct=jpeg"
     },
     {
       "name": "La Place",
       "type": "Restaurant",
-      "coords": [26.8550, 80.9480]
+      "coords": [26.8550, 80.9480],
+      "icon": "https://thumbs.dreamstime.com/z/pin-location-icon-vector-iconic-design-symbol-transparency-grid-94181514.jpg?ct=jpeg"
     }
   ],
   "points": [
