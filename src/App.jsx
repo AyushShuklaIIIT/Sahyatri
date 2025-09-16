@@ -13,6 +13,13 @@ const App = () => {
   const [permissionError, setPermissionError] = useState(false);
   const [intendedRole, setIntendedRole] = useState(null);
   const [isUserSynced, setIsUserSynced] = useState(false);
+
+
+  // Splash state (minimum display time)
+  const [showSplash, setShowSplash] = useState(true);
+
+  // PWA install state
+
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
 
@@ -74,13 +81,25 @@ const App = () => {
 
     deferredPrompt.prompt();
     const choiceResult = await deferredPrompt.userChoice;
+
+    console.log('User choice for PWA install:', choiceResult.outcome);
+
+
     console.log('User choice for PWA install:', choiceResult.outcome); 
+
     setShowInstallBtn(false);
     setDeferredPrompt(null);
   };
 
+  // Splash timer (minimum display time: 4000ms)
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 4000); // 4 seconds
+    return () => clearTimeout(timer);
+  }, []);
+
   const renderContent = () => {
-    if (isLoading) return <SplashScreen key="splash" />;
+    if (showSplash) return <SplashScreen key="splash" />; // minimum splash shown first
+    if (isLoading) return <SplashScreen key="loading" />; // auth loading fallback
     if (permissionError) return <PermissionDeniedScreen key="permission-denied" />;
     if (isAuthenticated) {
       const namespace = 'https://sahyatri-ten.vercel.app';
