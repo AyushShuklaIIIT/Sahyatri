@@ -21,16 +21,19 @@ const RoleSelectionScreen = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-white z-40"
+      className="fixed inset-0 z-40 bg-cover bg-center"
+      style={{ backgroundImage: "url('/bg.png')" }} // 👈 Place your background image here
     >
-      <div className="h-full flex flex-col">
-        <div className="gradient-bg text-white p-6 pb-12 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-            <Star className="w-8 h-8 text-blue-600" fill='currentColor' />
-          </div>
-          <h2 className="text-2xl font-bold mb-2">{t('welcome_title')}</h2>
-          <p className="text-blue-100">{t('access_level')}</p>
-        </div>
+      <div className="h-full flex flex-col"> 
+        {/* 👆 semi-transparent overlay to make text visible */}
+        
+        <div className="text-center p-6 pb-12">
+      <img 
+        src="/logo.png" 
+        alt="Logo" 
+        className="w-30 h-30 mx-auto mt-2.5"
+      />
+    </div>
 
         <div className="flex-1 p-6 -mt-6">
           <div className="space-y-4">

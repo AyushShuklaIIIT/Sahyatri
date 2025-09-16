@@ -13,6 +13,9 @@ const App = () => {
   const [intendedRole, setIntendedRole] = useState(null);
   const [isUserSynced, setIsUserSynced] = useState(false);
 
+  // Splash state (10 seconds minimum)
+  const [showSplash, setShowSplash] = useState(true);
+
   // PWA install state
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
@@ -78,15 +81,21 @@ const App = () => {
 
     deferredPrompt.prompt();
     const choiceResult = await deferredPrompt.userChoice;
-    console.log('User choice for PWA install:', choiceResult.outcome); // accepted or dismissed
+    console.log('User choice for PWA install:', choiceResult.outcome);
 
-    // Hide install button after user choice
     setShowInstallBtn(false);
     setDeferredPrompt(null);
   };
 
+  // 10-second splash timer
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 4000); // 10 seconds
+    return () => clearTimeout(timer);
+  }, []);
+
   const renderContent = () => {
-    if (isLoading) return <SplashScreen key="splash" />;
+    if (showSplash) return <SplashScreen key="splash" />; // Show splash for 10s
+    if (isLoading) return <SplashScreen key="loading" />; // Show default loader if Auth0 is loading
     if (permissionError) return <PermissionDeniedScreen key="permission-denied" />;
     if (isAuthenticated) {
       const namespace = 'https://sahyatri-ten.vercel.app';
@@ -108,20 +117,15 @@ const App = () => {
 
       {/* Install App Button */}
       {showInstallBtn && (
-  <div className="relative min-h-screen">
-    <div className="absolute bottom-4 right-4 z-[9999]">
-      <button
-        onClick={handleInstall}
-        className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition"
-      >
-        Install App
-      </button>
-    </div>
-  </div>
-)}
-
-
-      
+        <div className="absolute bottom-4 right-4 z-[9999]">
+          <button
+            onClick={handleInstall}
+            className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition"
+          >
+            Install App
+          </button>
+        </div>
+      )}
     </div>
   );
 };
