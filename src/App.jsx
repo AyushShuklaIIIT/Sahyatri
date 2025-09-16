@@ -1,6 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Download, X } from 'lucide-react';
 import TouristDashboard from './components/tourist/TouristDashboard';
 import AuthorityDashboard from './components/authority/AuthorityDashboard';
 import SplashScreen from './components/SplashScreen';
@@ -13,7 +14,7 @@ const App = () => {
   const [intendedRole, setIntendedRole] = useState(null);
   const [isUserSynced, setIsUserSynced] = useState(false);
 
-  // Splash state (10 seconds minimum)
+  // Splash state (minimum display time)
   const [showSplash, setShowSplash] = useState(true);
 
   // PWA install state
@@ -87,15 +88,15 @@ const App = () => {
     setDeferredPrompt(null);
   };
 
-  // 10-second splash timer
+  // Splash timer (minimum display time: 4000ms)
   useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 4000); // 10 seconds
+    const timer = setTimeout(() => setShowSplash(false), 4000); // 4 seconds
     return () => clearTimeout(timer);
   }, []);
 
   const renderContent = () => {
-    if (showSplash) return <SplashScreen key="splash" />; // Show splash for 10s
-    if (isLoading) return <SplashScreen key="loading" />; // Show default loader if Auth0 is loading
+    if (showSplash) return <SplashScreen key="splash" />; // minimum splash shown first
+    if (isLoading) return <SplashScreen key="loading" />; // auth loading fallback
     if (permissionError) return <PermissionDeniedScreen key="permission-denied" />;
     if (isAuthenticated) {
       const namespace = 'https://sahyatri-ten.vercel.app';
@@ -115,17 +116,36 @@ const App = () => {
         {renderContent()}
       </AnimatePresence>
 
-      {/* Install App Button */}
-      {showInstallBtn && (
-        <div className="absolute bottom-4 right-4 z-[9999]">
-          <button
-            onClick={handleInstall}
-            className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition"
+      <AnimatePresence>
+        {showInstallBtn && (
+          <motion.div
+            key="install-banner"
+            className='fixed bottom-4 left-4 w-auto max-w-sm z-50'
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
           >
-            Install App
-          </button>
-        </div>
-      )}
+            <div className='bg-slate-800 text-white p-4 rounded-xl shadow-lg flex items-center justify-between'>
+              <div className='flex items-center space-x-3'>
+                <Download className='w-6 h-6 text-blue-400' />
+                <div>
+                  <p className='font-semibold text-sm'>Install Sahyatri App</p>
+                  <p className='text-slate-300 text-xs'>Get a better experience</p>
+                </div>
+              </div>
+              <div className='flex items-center space-x-2'>
+                <button onClick={() => setShowInstallBtn(false)} className='p-2 text-slate-400 hover:text-white'>
+                  <X className='w-5 h-5' />
+                </button>
+                <button onClick={handleInstall} className='px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition'>
+                  Install
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
