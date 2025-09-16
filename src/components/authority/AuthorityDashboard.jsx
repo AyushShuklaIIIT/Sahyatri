@@ -7,6 +7,7 @@ import AlertsScreen from './screens/AlertsScreen';
 import TouristsScreen from './screens/TouristsScreen';
 import EfirScreen from './screens/EfirScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import ZoneControlScreen from './screens/ZoneControlScreen';
 import { useAuth0 } from '@auth0/auth0-react';
 
 const RenderActiveScreen = ({ activeSection, user }) => {
@@ -19,6 +20,8 @@ const RenderActiveScreen = ({ activeSection, user }) => {
             return <EfirScreen />;
         case 'settings':
             return <SettingsScreen user={user} />;
+        case 'zoneControl':
+            return <ZoneControlScreen />;
         case 'dashboard':
         default:
             return <DashboardScreen />;
