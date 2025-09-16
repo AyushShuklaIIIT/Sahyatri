@@ -1,7 +1,9 @@
-import { UserCog, ShieldCheck, Bell, LifeBuoy, LogOut, ChevronRight } from "lucide-react";
+import { ShieldCheck, Bell, LifeBuoy, LogOut, ChevronRight, MessageSquareWarning } from "lucide-react";
 import { useAuth0 } from '@auth0/auth0-react';
 import LanguageSwitcher from '../../ui/LanguageSwitcher';
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import ComplaintModal from "../ui/ComplaintModal";
 
 const getInitials = (name = '') => {
     const words = name.trim().split(' ');
@@ -12,13 +14,20 @@ const getInitials = (name = '') => {
 const ProfileScreen = () => {
     const { user, logout } = useAuth0();
     const { t } = useTranslation();
+    const [isComplaintModalOpen, setIsComplaintModalOpen] = useState(false);
 
     const menuItems = [
-        { icon: UserCog, label: t('profile.edit_profile') },
-        { icon: ShieldCheck, label: t('profile.emergency_contacts') },
-        { icon: Bell, label: t('profile.settings') },
-        { icon: LifeBuoy, label: t('profile.help_support') },
+        { id: 'emergency', icon: ShieldCheck, label: t('profile.emergency_contacts') },
+        { id: 'notifications', icon: Bell, label: t('profile.settings') },
+        { id: 'help', icon: LifeBuoy, label: t('profile.help_support') },
+        { id: 'complaint', icon: MessageSquareWarning, label: t('profile.complaint') }
     ];
+
+    const handleMenuItemClick = (id) => {
+        if(id === 'complaint') {
+            setIsComplaintModalOpen(true);
+        }
+    }
 
     if (!user) {
         return <div className="flex items-center justify-center min-h-screen">{t('loading')}</div>;
@@ -27,6 +36,7 @@ const ProfileScreen = () => {
     const initials = getInitials(user.name);
 
     return (
+        <>
         <div className="flex flex-col min-h-screen bg-gray-50">
             {/* Header Section */}
             <header className="bg-white p-6 shadow-sm">
@@ -50,7 +60,8 @@ const ProfileScreen = () => {
                     <ul className="divide-y divide-gray-100">
                         {menuItems.map((item) => (
                             <li
-                                key={item.label}
+                                key={item.id}
+                                onClick={() => handleMenuItemClick(item.id)}
                                 className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
                             >
                                 <div className="flex items-center space-x-4">
@@ -78,6 +89,8 @@ const ProfileScreen = () => {
                 </div>
             </div>
         </div>
+        <ComplaintModal isOpen={isComplaintModalOpen} onClose={() => setIsComplaintModalOpen(false)} />
+</>
     );
 };
 
