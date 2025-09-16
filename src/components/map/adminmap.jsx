@@ -1,24 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
-import iconUrl from "leaflet/dist/images/marker-icon.png";
-import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
-import shadowUrl from "leaflet/dist/images/marker-shadow.png";
-
-// override the default icon globally
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl,
-  iconUrl,
-  shadowUrl,
-});
 
 export default function AdminMap() {
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
   const markersRef = useRef([]);
+  const zoneLayersRef = useRef([]);
   const [points, setPoints] = useState([]);
+  const [zones, setZones] = useState([]);
 
   // initialize map
   useEffect(() => {
@@ -37,20 +27,21 @@ export default function AdminMap() {
     };
   }, []);
 
-  // fetch points every second
+  // fetch points & zones every second
   useEffect(() => {
-    const fetchPoints = async () => {
+    const fetchData = async () => {
       try {
         const res = await fetch("/data.json");
         const json = await res.json();
         setPoints(json.points || []);
+        setZones(json.zones || []);
       } catch (err) {
         console.error(err);
       }
     };
 
-    fetchPoints(); // initial fetch
-    const interval = setInterval(fetchPoints, 1000);
+    fetchData();
+    const interval = setInterval(fetchData, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -70,6 +61,35 @@ export default function AdminMap() {
       markersRef.current.push(marker);
     });
   }, [points]);
+
+  // draw zones whenever zones change
+  useEffect(() => {
+    const map = leafletMapRef.current;
+    if (!map) return;
+
+    // clear old zone layers
+    zoneLayersRef.current.forEach((layer) => map.removeLayer(layer));
+    zoneLayersRef.current = [];
+
+    zones.forEach((zone) => {
+      if (Array.isArray(zone.coords[0])) {
+        const polygon = L.polygon(zone.coords, {
+          color: zone.color || "blue",
+          weight: 2,
+          fillOpacity: 0.3,
+        }).addTo(map).bindPopup(zone.name);
+        zoneLayersRef.current.push(polygon);
+      } else {
+        const circle = L.circle(zone.coords, {
+          color: zone.color || "blue",
+          weight: 2,
+          fillOpacity: 0.3,
+          radius: zone.radius || 500,
+        }).addTo(map).bindPopup(zone.name);
+        zoneLayersRef.current.push(circle);
+      }
+    });
+  }, [zones]);
 
   return <div ref={mapRef} style={{ width: "100%", height: "100%" }} />;
 }
