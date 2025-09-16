@@ -37,6 +37,7 @@
   "nav": {
     "map": "Map",
     "alerts": "Alerts",
-    "profile": "Profile"
+    "profile": "Profile",
+    "nearby": "Nearby"
   }
 }

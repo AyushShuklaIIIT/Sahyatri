@@ -1,4 +1,4 @@
-import { LayoutDashboard, Bell, Users, FileText, Settings, LogOut, X } from 'lucide-react';
+import { LayoutDashboard, Bell, Users, FileText, Settings, LogOut, X, Palette } from 'lucide-react';
 import { useAuth0 } from '@auth0/auth0-react';
 
 const Sidebar = ({ user, activeSection, setActiveSection, isOpen, setIsOpen }) => {
@@ -8,7 +8,7 @@ const Sidebar = ({ user, activeSection, setActiveSection, isOpen, setIsOpen }) =
     { id: 'alerts', label: 'AI Alerts', icon: Bell },
     { id: 'tourists', label: 'Tourists', icon: Users },
     { id: 'efir', label: 'E-FIR System', icon: FileText },
-    { id: 'change zone', label: 'Change Zone', icon: Settings },
+    { id: 'change zone', label: 'Change Zone', icon: Pallete },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -38,7 +38,7 @@ const Sidebar = ({ user, activeSection, setActiveSection, isOpen, setIsOpen }) =
                 key={item.id}
                 onClick={() => {
                   setActiveSection(item.id);
-                  setIsOpen(false); // Close sidebar on navigation
+                  setIsOpen(false); 
                 }}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${
                   activeSection === item.id 
