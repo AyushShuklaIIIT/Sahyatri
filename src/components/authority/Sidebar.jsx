@@ -8,7 +8,7 @@ const Sidebar = ({ user, activeSection, setActiveSection, isOpen, setIsOpen }) =
     { id: 'alerts', label: 'AI Alerts', icon: Bell },
     { id: 'tourists', label: 'Tourists', icon: Users },
     { id: 'efir', label: 'E-FIR System', icon: FileText },
-    { id: 'change zone', label: 'Change Zone', icon: Pallete },
+    { id: 'change zone', label: 'Change Zone', icon: Palette },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
