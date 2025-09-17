@@ -18,6 +18,14 @@ export default function LiveMap({ mode = "both" }) {
   const [data, setData] = useState(null);
   const defaultCoords = [23.217319, 77.408748];
 
+  
+  const locator = L.icon({
+    iconUrl: 'https://img.favpng.com/9/8/10/computer-icons-google-maps-locator-map-png-favpng-QV6Yi1hU8xM0Khsb8Tdks04Ur.jpg',          // path relative to public
+    iconSize: [32, 32],                 // size of the icon in pixels
+    iconAnchor: [16, 32],               // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -32],              // point from which the popup should open relative to iconAnchor
+  });
+
   const getPlaceIcon = (url) =>
     L.icon({ iconUrl: url, iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -30] });
 
@@ -34,7 +42,7 @@ export default function LiveMap({ mode = "both" }) {
     const map = leafletMapRef.current;
     if (!map || !navigator.geolocation) return;
 
-    const userMarker = L.marker(defaultCoords).addTo(map).bindPopup("You are here");
+    const userMarker = L.marker(defaultCoords, {icon: locator}).addTo(map).bindPopup("You are here");
     const accuracyCircle = L.circle(defaultCoords, { radius: 0 }).addTo(map);
 
     const watchId = navigator.geolocation.watchPosition(
@@ -176,7 +184,7 @@ export default function LiveMap({ mode = "both" }) {
     const map = leafletMapRef.current;
     if (!map || !navigator.geolocation) return;
 
-    const userMarker = L.marker(defaultCoords).addTo(map).bindPopup("You are here");
+    const userMarker = L.marker(defaultCoords, {icon: locator}).addTo(map).bindPopup("You are here");
     const accuracyCircle = L.circle(defaultCoords, { radius: 0 }).addTo(map);
 
     const watchId = navigator.geolocation.watchPosition(

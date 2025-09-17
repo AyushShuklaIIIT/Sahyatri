@@ -12,6 +12,13 @@ export default function AdminMap() {
   const [zones, setZones] = useState([]);
   const [places, setPlaces] = useState([]);
 
+  const locator = L.icon({
+    iconUrl: 'https://img.favpng.com/9/8/10/computer-icons-google-maps-locator-map-png-favpng-QV6Yi1hU8xM0Khsb8Tdks04Ur.jpg',          // path relative to public
+    iconSize: [32, 32],                 // size of the icon in pixels
+    iconAnchor: [16, 32],               // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -32],              // point from which the popup should open relative to iconAnchor
+  });
+
   // initialize map
   useEffect(() => {
     if (!mapRef.current || leafletMapRef.current) return;
@@ -62,7 +69,7 @@ export default function AdminMap() {
 
     // add new markers
     points.forEach((p) => {
-      const marker = L.marker(p.position).addTo(map).bindPopup(p.popup);
+      const marker = L.marker(p.position, {icon : locator}).addTo(map).bindPopup(p.popup);
       markersRef.current.push(marker);
     });
   }, [points]);
