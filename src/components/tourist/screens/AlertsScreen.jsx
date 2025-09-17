@@ -7,19 +7,19 @@ const AlertCard = ({ alert }) => {
     const alertStyles = {
         danger: {
             icon: ShieldAlert,
-            bg: 'bg-red-100',
+            bg: 'bg-red-100 bg-opacity-80',
             iconBg: 'bg-red-200',
             iconColor: 'text-red-600',
         },
         weather: {
             icon: Cloudy,
-            bg: 'bg-blue-100',
+            bg: 'bg-blue-100 bg-opacity-80',
             iconBg: 'bg-blue-200',
             iconColor: 'text-blue-600',
         },
         info: {
             icon: Info,
-            bg: 'bg-gray-100',
+            bg: 'bg-gray-100 bg-opacity-80',
             iconBg: 'bg-gray-200',
             iconColor: 'text-gray-600',
         }
@@ -67,11 +67,16 @@ const AlertsScreen = () => {
             message: 'alerts.info_message',
             time: '3 hours ago'
         }
-    ]
+    ];
 
     return (
-        <div className="p-4 bg-gray-100 min-h-screen">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">{t('alerts.title')}</h1>
+        <div
+            className="p-4 min-h-screen bg-cover bg-center"
+            style={{ backgroundImage: "url('/bg.png')" }} // <-- place bg.png inside public/
+        >
+            <h1 className="text-3xl font-bold text-gray-800 mb-6  bg-opacity-70 p-2 rounded-xl inline-block">
+                {t('alerts.title')}
+            </h1>
             <div className="space-y-4">
                 {mockAlerts.map(alert => (
                     <AlertCard key={alert.id} alert={alert} />

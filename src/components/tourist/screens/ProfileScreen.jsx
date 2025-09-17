@@ -24,10 +24,10 @@ const ProfileScreen = () => {
     ];
 
     const handleMenuItemClick = (id) => {
-        if(id === 'complaint') {
+        if (id === 'complaint') {
             setIsComplaintModalOpen(true);
         }
-    }
+    };
 
     if (!user) {
         return <div className="flex items-center justify-center min-h-screen">{t('loading')}</div>;
@@ -37,60 +37,71 @@ const ProfileScreen = () => {
 
     return (
         <>
-        <div className="flex flex-col min-h-screen bg-gray-50">
-            {/* Header Section */}
-            <header className="bg-white p-6 shadow-sm">
-                <div className="flex items-center space-x-4">
-                {user.picture ? (
-                    <img src={user.picture} alt={`Profile of ${user.name}`} className="w-20 h-20 rounded-full ring-4 ring-gray-300 object-cover" />
-                ) : (
-                    <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center ring-4 ring-gray-300">
-                        <span className="text-3xl font-bold text-gray-600">{initials}</span>
+            <div
+                className="flex flex-col min-h-screen bg-cover bg-center"
+                style={{ backgroundImage: "url('/bg.png')" }} // <-- background image from public folder
+            >
+                {/* Header Section */}
+                <header className="bg-white bg-opacity-80 p-6 shadow-sm">
+                    <div className="flex items-center space-x-4">
+                        {user.picture ? (
+                            <img
+                                src={user.picture}
+                                alt={`Profile of ${user.name}`}
+                                className="w-20 h-20 rounded-full ring-4 ring-gray-300 object-cover"
+                            />
+                        ) : (
+                            <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center ring-4 ring-gray-300">
+                                <span className="text-3xl font-bold text-gray-600">{initials}</span>
+                            </div>
+                        )}
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-800">{user.name}</h1>
+                            <p className="text-gray-500 text-sm">ID: {user.sub}</p>
+                        </div>
                     </div>
-                )}
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-800">{user.name}</h1>
-                        <p className="text-gray-500 text-sm">ID: {user.sub}</p>
+                </header>
+
+                <div className="flex-grow p-4">
+                    <div className="bg-white bg-opacity-80 rounded-2xl p-2 card-shadow">
+                        <ul className="divide-y divide-gray-100">
+                            {menuItems.map((item) => (
+                                <li
+                                    key={item.id}
+                                    onClick={() => handleMenuItemClick(item.id)}
+                                    className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
+                                >
+                                    <div className="flex items-center space-x-4">
+                                        <item.icon className="w-6 h-6 text-gray-500" />
+                                        <span className="font-medium text-gray-700">{item.label}</span>
+                                    </div>
+                                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                </div>
-            </header>
 
-            <div className="flex-grow p-4">
-                <div className="bg-white rounded-2xl p-2 card-shadow">
-                    <ul className="divide-y divide-gray-100">
-                        {menuItems.map((item) => (
-                            <li
-                                key={item.id}
-                                onClick={() => handleMenuItemClick(item.id)}
-                                className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
-                            >
-                                <div className="flex items-center space-x-4">
-                                    <item.icon className="w-6 h-6 text-gray-500" />
-                                    <span className="font-medium text-gray-700">{item.label}</span>
-                                </div>
-                                <ChevronRight className="w-5 h-5 text-gray-400" />
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                    <div className="mt-6">
+                        <LanguageSwitcher />
+                    </div>
 
-                <div className="mt-6">
-                    <LanguageSwitcher />
-                </div>
-
-                <div className="mt-6">
-                    <button
-                        onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-                        className="w-full flex items-center justify-center space-x-3 bg-white p-4 rounded-2xl card-shadow text-red-500 font-bold hover:bg-red-50 active:scale-95 transition-all"
-                    >
-                        <LogOut className="w-6 h-6" />
-                        <span>{t('profile.logout')}</span>
-                    </button>
+                    <div className="mt-6">
+                        <button
+                            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                            className="w-full flex items-center justify-center space-x-3 bg-white bg-opacity-80 p-4 rounded-2xl card-shadow text-red-500 font-bold hover:bg-red-50 active:scale-95 transition-all"
+                        >
+                            <LogOut className="w-6 h-6" />
+                            <span>{t('profile.logout')}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <ComplaintModal isOpen={isComplaintModalOpen} onClose={() => setIsComplaintModalOpen(false)} />
-</>
+
+            <ComplaintModal
+                isOpen={isComplaintModalOpen}
+                onClose={() => setIsComplaintModalOpen(false)}
+            />
+        </>
     );
 };
 
