@@ -1,156 +1,141 @@
+'use client'
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import * as turf from "@turf/turf";
-
-import iconUrl from "leaflet/dist/images/marker-icon.png";
-import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
-import shadowUrl from "leaflet/dist/images/marker-shadow.png";
-
-// 👇 override the default icon globally
-delete L.Icon.Default.prototype._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl,
-  iconUrl,
-  shadowUrl,
-});
+import axios from "axios";
+import { useAuth0 } from '@auth0/auth0-react';
 
 export default function LiveMap({ mode = "both" }) {
+  const { user, logout } = useAuth0();
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
-  const [data, setData] = useState(null);
+  const zoneLayersRef = useRef([]);
+  const markerLayersRef = useRef([]);
   const focusRef = useRef(false);
+  const [data, setData] = useState(null);
+  const defaultCoords = [23.217319, 77.408748];
 
-  const getPlaceIcon = (iconUrl) => {
-  return L.icon({
-    iconUrl,
-    iconSize: [30, 30],        // size of the icon
-    iconAnchor: [15, 30],      // point of the icon which will correspond to marker's location
-    popupAnchor: [0, -30]      // point from which the popup should open relative to the iconAnchor
-  });
-};
+  const getPlaceIcon = (url) =>
+    L.icon({ iconUrl: url, iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -30] });
 
+  // Initialize map
   useEffect(() => {
-    // Fetch JSON data
-    fetch("/data.json")
-      .then((res) => res.json())
-      .then((json) => setData(json))
-      .catch((err) => console.error(err));
+    if (mapRef.current && !leafletMapRef.current) {
+      const map = L.map(mapRef.current).setView(defaultCoords, 13);
+      leafletMapRef.current = map;
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
+    }
   }, []);
 
+  // Fetch data every second
   useEffect(() => {
-    if (!data || !mapRef.current || leafletMapRef.current) return;
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(
+          `https://sahyatri-backend.vercel.app/fetch_loc`
+        );
+        const json = await res.data;
+        setData(json);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchData();
+    const interval = setInterval(fetchData, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
-    const map = L.map(mapRef.current).setView([23.217319, 77.408748], 13);
-    leafletMapRef.current = map;
+  // Update markers and zones
+  useEffect(() => {
+    const map = leafletMapRef.current;
+    if (!map || !data) return;
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-    }).addTo(map);
+    // Clear old zones
+    zoneLayersRef.current.forEach(z => map.removeLayer(z.layer));
+    zoneLayersRef.current = [];
 
-    const zoneLayers = [];
-
-    // DRAW ZONES
+    // Draw zones
     if (mode === "zones" || mode === "both") {
-      data.zones.forEach((zone) => {
+      data.zones.forEach(zone => {
+        let layer;
         if (Array.isArray(zone.coords[0])) {
-          const poly = L.polygon(zone.coords, {
+          layer = L.polygon(zone.coords, {
             color: zone.color,
             fillColor: zone.color,
             fillOpacity: 0.4,
           }).addTo(map).bindPopup(zone.name);
-          zoneLayers.push({ type: "polygon", layer: poly, data: zone });
+          zoneLayersRef.current.push({ type: "polygon", layer, data: zone });
         } else {
-          const circ = L.circle(zone.coords, {
+          layer = L.circle(zone.coords, {
             color: zone.color,
             fillColor: zone.color,
             fillOpacity: 0.4,
             radius: zone.radius,
           }).addTo(map).bindPopup(zone.name);
-          zoneLayers.push({ type: "circle", layer: circ, data: zone });
+          zoneLayersRef.current.push({ type: "circle", layer, data: zone });
         }
       });
     }
 
-    // ADD PLACES
+    // Clear old markers
+    markerLayersRef.current.forEach(m => map.removeLayer(m));
+    markerLayersRef.current = [];
+
+    // Draw places
     if (mode === "places" || mode === "both") {
-      data.places.forEach((p) => {
+      data.places.forEach(p => {
         const icon = getPlaceIcon(p.icon);
-        L.marker(p.coords, { icon })
-          .addTo(map)
+        const marker = L.marker(p.coords, { icon }).addTo(map)
           .bindPopup(`<b>${p.name}</b><br>Type: ${p.type}`);
+        markerLayersRef.current.push(marker);
       });
     }
 
-    // USER LOCATION
-    const userMarker = L.marker([0, 0]).addTo(map).bindPopup("You are here");
-    const accuracyCircle = L.circle([0, 0], { radius: 0 }).addTo(map);
+    // **Only focus on default bounds if user location has not yet arrived**
+    if (!focusRef.current && !navigator.geolocation) {
+      const allLayers = [...markerLayersRef.current, ...zoneLayersRef.current.map(z => z.layer)];
+      if (allLayers.length) {
+        const group = L.featureGroup(allLayers);
+        map.fitBounds(group.getBounds(), { padding: [50, 50] });
+        focusRef.current = true;
+      }
+    }
+  }, [data, mode]);
 
-    let lastLat = null,
-      lastLng = null;
+  // User location tracking
+  useEffect(() => {
+    const map = leafletMapRef.current;
+    if (!map || !navigator.geolocation) return;
+
+    const userMarker = L.marker(defaultCoords).addTo(map).bindPopup("You are here");
+    const accuracyCircle = L.circle(defaultCoords, { radius: 0 }).addTo(map);
 
     const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
+      async (pos) => {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
         const acc = pos.coords.accuracy;
 
-        lastLat = lat;
-        lastLng = lng;
+        const res = await axios.post(
+          `https://sahyatri-backend.vercel.app/update_co`,
+          { name : user.name, lat, lng}
+        );
 
         userMarker.setLatLng([lat, lng]);
         accuracyCircle.setLatLng([lat, lng]).setRadius(acc);
-        
-        // Allow only focus one time
+
+        // **Focus only once** on user location
         if (!focusRef.current) {
-          map.setView([lat, lng], map.getZoom());
+          map.setView([lat, lng], 13);
           focusRef.current = true;
         }
-
-        checkZones(lat, lng);
       },
-      (err) => console.error(err),
+      console.error,
       { enableHighAccuracy: true }
     );
 
-    function checkZones(lat, lng) {
-      if (!zoneLayers.length) return;
-      const userPoint = turf.point([lng, lat]);
-      const inside = [];
-
-      zoneLayers.forEach((z) => {
-        if (z.type === "polygon") {
-          const coordsLngLat = z.data.coords.map((c) => [c[1], c[0]]);
-          if (
-            coordsLngLat[0][0] !== coordsLngLat[coordsLngLat.length - 1][0] ||
-            coordsLngLat[0][1] !== coordsLngLat[coordsLngLat.length - 1][1]
-          ) {
-            coordsLngLat.push(coordsLngLat[0]);
-          }
-          const poly = turf.polygon([coordsLngLat]);
-          if (turf.booleanPointInPolygon(userPoint, poly)) inside.push(z.data.name);
-        } else {
-          const center = [z.data.coords[1], z.data.coords[0]];
-          const dist = turf.distance(userPoint, turf.point(center), { units: "meters" });
-          if (dist <= (z.data.radius || 0)) inside.push(z.data.name);
-        }
-      });
-
-      console.log(inside.length ? `Inside: ${inside.join(", ")}` : "Outside all zones");
-    }
-
-    const interval = setInterval(() => {
-      if (lastLat && lastLng) checkZones(lastLat, lastLng);
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-      navigator.geolocation.clearWatch(watchId);
-      map.remove();
-      leafletMapRef.current = null;
-    };
-  }, [data, mode]);
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, []);
 
   return <div ref={mapRef} style={{ width: "100%", height: "100%" }}></div>;
 }

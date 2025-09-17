@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import axios from "axios";
 
 export default function AdminMap() {
   const mapRef = useRef(null);
@@ -9,6 +10,7 @@ export default function AdminMap() {
   const zoneLayersRef = useRef([]);
   const [points, setPoints] = useState([]);
   const [zones, setZones] = useState([]);
+  const [places, setPlaces] = useState([]);
 
   // initialize map
   useEffect(() => {
@@ -31,10 +33,13 @@ export default function AdminMap() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("/data.json");
-        const json = await res.json();
+        const res = await axios.get(
+          `https://sahyatri-backend.vercel.app/fetch_loc`
+        );
+        const json = await res.data;
         setPoints(json.points || []);
         setZones(json.zones || []);
+        setPlaces(json.places || []);
       } catch (err) {
         console.error(err);
       }
