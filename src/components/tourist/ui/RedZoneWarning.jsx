@@ -38,7 +38,7 @@ const RedZoneWarning = ({ onClose, warningSound }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className='fixed inset-0 bg-red-800/75 z-[100] flex flex-col items-center justify-center text-white text-center p-4 backdrop-blur-sm'
+            className='fixed inset-0 bg-red-800/75 z-[9999] flex flex-col items-center justify-center text-white text-center p-4 backdrop-blur-sm'
         >
             <motion.div
                 animate={{ scale: [1, 1.1, 1], opacity: [0.8, 1, 0.8] }}
