@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Siren } from 'lucide-react';
 import BottomNav from './ui/BottomNav';
@@ -7,6 +7,7 @@ import AlertsScreen from './screens/AlertsScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import PanicModal from './PanicModal';
 import NearbyScreen from './screens/NearbyScreen';
+import RedZoneWarning from './ui/RedZoneWarning';
 
 const RenderActiveScreen = ({ activeTab, user }) => {
     switch (activeTab) {
@@ -26,6 +27,17 @@ const RenderActiveScreen = ({ activeTab, user }) => {
 const TouristDashboard = ({ user }) => {
     const [activeTab, setActiveTab] = useState('map');
     const [isPanicModalOpen, setisPanicModalOpen] = useState(false);
+    const [isInRedZone, setIsInRedZone] = useState(false); // Make this state true to trigger the red zone warning screen.
+    const [warningSound, setWarningSound] = useState(null);
+
+    useEffect(() => {
+        const audio = new Audio('/warning-alert.mp3');
+        audio.preload = 'auto';
+        setWarningSound(audio);
+    }, []);
+
+    // This is just a dummy button to test the warning screen. Remove it after successfully implementing the geofencing logic.
+    const toggleWarning = () => setIsInRedZone(prev => !prev);
 
     if (!user) {
         return (
@@ -37,6 +49,10 @@ const TouristDashboard = ({ user }) => {
 
     return (
         <>
+            <AnimatePresence>
+                {isInRedZone && <RedZoneWarning onClose={() => setIsInRedZone(false)} warningSound={warningSound} />}
+            </AnimatePresence>
+
             <div className="w-full min-h-screen bg-gray-50 relative md:mx-auto">
                 <main className="pb-24">
                     <AnimatePresence mode="wait">
@@ -71,6 +87,8 @@ const TouristDashboard = ({ user }) => {
                 {/* Bottom Navigation */}
                 <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
+
+            <button onClick={toggleWarning} className='fixed bottom-24 left-5 bg-yellow-400 text-black px-3 py-2 rounded-lg shadow-lg z-40 text-xs font-bold'>Test Warning</button>
 
             {/* Panic Modal */}
             <AnimatePresence>
