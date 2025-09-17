@@ -3,17 +3,17 @@
   "access_level": "अपनी पहुँच का स्तर चुनें",
   "select_language": "भाषा चुनें",
   "tourist": {
-    "title": "पर्यटक",
+    "title": "पर्यटक प्रवेश",
     "description": "व्यक्तिगत सुरक्षा और आपातकालीन सहायता"
   },
   "authority": {
-    "title": "प्राधिकारी",
+    "title": "प्राधिकारी प्रवेश",
     "description": "पुलिस, पर्यटन विभाग और आपातकालीन प्रतिक्रिया"
   },
   "tags": {
-    "digital_id": "डिजिटल आईडी",
+    "digital_id": "मैप्स",
     "panic_button": "पैनिक बटन",
-    "e-fir": "ई-एफआईआर",
+    "e-fir": "ज़ोन",
     "monitoring": "निगरानी"
   },
   "profile": {
