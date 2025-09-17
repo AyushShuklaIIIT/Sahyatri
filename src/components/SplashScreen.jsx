@@ -1,33 +1,63 @@
 // src/components/SplashScreen.jsx
-import { motion } from 'framer-motion';
-import { Shield, Star } from 'lucide-react';
+import React, { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const SplashScreen = () => {
+function SplashScreen({
+  onFinish,
+  backgroundImage = "/bg.png",          // <-- Pass your background image URL here
+  logoImage = "/logo.png",  // optional, defaults to /logo.png
+  secondImage = "/logo_text.png" // optional, defaults to /second-image.png
+}) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onFinish(); // Hide splash after 5 seconds
+    }, 5000); // total splash duration
+    return () => clearTimeout(timer);
+  }, [onFinish]);
+
   return (
-    <motion.div
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.5 } }}
-      className="fixed inset-0 gradient-bg flex flex-col items-center justify-center text-white z-50"
-    >
+    <AnimatePresence>
       <motion.div
-        initial={{ y: 50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="text-center"
+        key="splash"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          width: "100vw",
+          backgroundColor: "#FFFFFF",
+          backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none", // <-- background image applied here
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          overflow: "hidden",
+        }}
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0, transition: { duration: 1 } }} // fade out on exit
       >
-        <div className="w-32 h-32 mx-auto mb-8 bg-white rounded-full flex items-center justify-center blockchain-pattern">
-          <Star className="w-16 h-16 text-blue-600" fill="currentColor" />
-        </div>
-        <h1 className="text-4xl font-bold mb-4">Sahyatri</h1>
-        <p className="text-blue-100 text-lg px-8 mb-2">AI, Blockchain & Geo-Fencing</p>
-        <p className="text-blue-200 text-sm px-8">Powered Tourist Safety</p>
-        
-        <div className="mt-12">
-          <div className="w-10 h-10 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
-        </div>
+        {/* Logo appears at center, then moves up */}
+        <motion.img
+          src={logoImage}
+          alt="Logo"
+          style={{ width: "150px", marginBottom: "10px"}} // small gap
+          initial={{ y: 0, opacity: 0 }}
+          animate={{ y: -100, opacity: 1 }}
+          transition={{ delay: 1, duration: 1.5, ease: "easeInOut" }}
+        />
+
+        {/* Second image fades in below logo */}
+        <motion.img
+          src={secondImage}
+          alt="Secondary"
+          style={{ width: "400px", marginTop: "5px", opacity: 0 }} // small gap
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5, duration: 1 }}
+        />
       </motion.div>
-    </motion.div>
+    </AnimatePresence>
   );
-};
+}
 
 export default SplashScreen;

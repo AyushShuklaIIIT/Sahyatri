@@ -26,7 +26,7 @@ const BottomNav = ({ activeTab, onTabChange }) => {
     ];
 
     return (
-        <footer className="fixed bottom-0 left-0 w-full z-30 md:left-1/2 md:transform md:-translate-x-1/2">
+        <footer className="fixed bottom-0 left-0 w-full z-50 md:left-1/2 md:transform md:-translate-x-1/2">
             <motion.div
                 initial={{ y: 100 }}
                 animate={{ y: 0 }}

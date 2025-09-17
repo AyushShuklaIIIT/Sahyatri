@@ -24,7 +24,7 @@ const PanicModal = ({ onClose }) => {
         <h3 className="text-xl font-bold text-gray-900 mb-2">{t('emergency.title')}</h3>
         <p className="text-gray-600 mb-6">{t('emergency.message')}</p>
         <div className="space-y-3">
-          <button className="w-full danger-gradient text-white py-3 rounded-xl font-semibold">{t('emergency.call')}</button>
+          <a href="tel:112" className="block w-full danger-gradient text-white py-3 rounded-xl font-semibold">{t('emergency.call', 'Call Emergency: 112')}</a>
           <button onClick={onClose} className="w-full bg-gray-200 text-gray-800 py-3 rounded-xl font-semibold">{t('emergency.cancel')}</button>
         </div>
       </motion.div>
