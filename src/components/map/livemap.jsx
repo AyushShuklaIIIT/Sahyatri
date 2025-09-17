@@ -4,8 +4,11 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import { useAuth0 } from '@auth0/auth0-react';
+import { useDispatch } from "react-redux";
+import { setIsInRedZone, setWarningDisplayed } from "../../store/redZoneSlice";
 
 export default function LiveMap({ mode = "both" }) {
+  const dispatch = useDispatch();
   const { user, logout } = useAuth0();
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
@@ -26,6 +29,72 @@ export default function LiveMap({ mode = "both" }) {
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
     }
   }, []);
+
+  useEffect(() => {
+    const map = leafletMapRef.current;
+    if (!map || !navigator.geolocation) return;
+
+    const userMarker = L.marker(defaultCoords).addTo(map).bindPopup("You are here");
+    const accuracyCircle = L.circle(defaultCoords, { radius: 0 }).addTo(map);
+
+    const watchId = navigator.geolocation.watchPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const acc = pos.coords.accuracy;
+
+        // update server
+        await axios.post(
+          `https://sahyatri-backend.vercel.app/update_co`,
+          { name: user.name, lat, lng}
+        );
+
+        userMarker.setLatLng([lat, lng]);
+        accuracyCircle.setLatLng([lat, lng]).setRadius(acc);
+
+        // ✅ Check if inside any red zone
+        let insideRed = false;
+        if (data && data.zones) {
+          for (const z of data.zones) {
+            if (z.color?.toLowerCase() === 'red') {
+              if (Array.isArray(z.coords[0])) {
+                // polygon
+                const polygon = L.polygon(z.coords);
+                if (polygon.getBounds().contains([lat, lng])) {
+                  insideRed = true;
+                  break;
+                }
+              } else {
+                // circle
+                const distance = map.distance([lat, lng], z.coords);
+                if (distance <= z.radius) {
+                  insideRed = true;
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        dispatch(setIsInRedZone(insideRed))
+
+        if(!insideRed) {
+          dispatch(setWarningDisplayed(false));
+        }
+
+        // **Focus only once** on user location
+        if (!focusRef.current) {
+          map.setView([lat, lng], 13);
+          focusRef.current = true;
+        }
+      },
+      console.error,
+      { enableHighAccuracy: true }
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [data]); // <- depend on data so you have zones available
+
 
   // Fetch data every second
   useEffect(() => {

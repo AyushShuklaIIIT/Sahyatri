@@ -8,6 +8,8 @@ import ProfileScreen from './screens/ProfileScreen';
 import PanicModal from './PanicModal';
 import NearbyScreen from './screens/NearbyScreen';
 import RedZoneWarning from './ui/RedZoneWarning';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsInRedZone, setWarningDisplayed } from '../../store/redZoneSlice';
 
 const RenderActiveScreen = ({ activeTab, user }) => {
     switch (activeTab) {
@@ -27,7 +29,9 @@ const RenderActiveScreen = ({ activeTab, user }) => {
 const TouristDashboard = ({ user }) => {
     const [activeTab, setActiveTab] = useState('map');
     const [isPanicModalOpen, setisPanicModalOpen] = useState(false);
-    const [isInRedZone, setIsInRedZone] = useState(false); // Make this state true to trigger the red zone warning screen.
+    const dispatch = useDispatch();
+    const isInRedZone = useSelector((state) => state.redZone.isInRedZone); // Make this state true to trigger the red zone warning screen.
+    const isWarningDisplayed = useSelector((state) => state.redZone.isWarningDisplayed);
     const [warningSound, setWarningSound] = useState(null);
 
     useEffect(() => {
@@ -47,7 +51,10 @@ const TouristDashboard = ({ user }) => {
     return (
         <>
             <AnimatePresence>
-                {isInRedZone && <RedZoneWarning onClose={() => setIsInRedZone(false)} warningSound={warningSound} />}
+                {(isInRedZone && !isWarningDisplayed) && <RedZoneWarning onClose={() => {
+                    dispatch(setIsInRedZone(false));
+                    dispatch(setWarningDisplayed(true))
+                }} warningSound={warningSound} />}
             </AnimatePresence>
 
             <div className="w-full min-h-screen bg-gray-50 relative md:mx-auto">

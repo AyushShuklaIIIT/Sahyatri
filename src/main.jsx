@@ -5,9 +5,11 @@ import App from './App.jsx';
 import "leaflet/dist/leaflet.css";
 import { Auth0Provider } from '@auth0/auth0-react';
 import './i18n';
+import { Provider } from 'react-redux';
 
 // ✅ PWA service worker helper
 import { registerSW } from 'virtual:pwa-register'
+import { store } from './store/store.js';
 
 const domain = import.meta.env.VITE_AUTH0_DOMAIN;
 const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
@@ -52,16 +54,18 @@ console.log('Service Worker controller:', navigator.serviceWorker.controller);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Auth0Provider
-      domain={domain}
-      clientId={clientId}
-      authorizationParams={{
-        redirect_uri: window.location.origin,
-        audience: audience,
-        scope: 'openid profile email'
-      }}
-    >
-      <App deferredPrompt={deferredPrompt} />
-    </Auth0Provider>
+    <Provider store={store}>
+      <Auth0Provider
+        domain={domain}
+        clientId={clientId}
+        authorizationParams={{
+          redirect_uri: window.location.origin,
+          audience: audience,
+          scope: 'openid profile email'
+        }}
+      >
+        <App deferredPrompt={deferredPrompt} />
+      </Auth0Provider>
+    </Provider>
   </StrictMode>
 );
