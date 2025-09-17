@@ -13,10 +13,7 @@ const App = () => {
   const [permissionError, setPermissionError] = useState(false);
   const [intendedRole, setIntendedRole] = useState(null);
   const [isUserSynced, setIsUserSynced] = useState(false);
-
-
-  // Splash state (minimum display time)
-  const [showSplash, setShowSplash] = useState(true);
+  const [minTimePassed, setMinTimePassed] = useState(false);
 
   // PWA install state
 
@@ -91,16 +88,20 @@ const App = () => {
     setDeferredPrompt(null);
   };
 
-  // Splash timer (minimum display time: 4000ms)
   useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 4000); // 4 seconds
+    const timer = setTimeout(() => {
+      setMinTimePassed(true);
+    }, 3000);
     return () => clearTimeout(timer);
   }, []);
 
   const renderContent = () => {
-    if (showSplash) return <SplashScreen key="splash" />; // minimum splash shown first
-    if (isLoading) return <SplashScreen key="loading" />; // auth loading fallback
+    if(!minTimePassed || isLoading) {
+      return <SplashScreen key="splash" />;
+    }
+
     if (permissionError) return <PermissionDeniedScreen key="permission-denied" />;
+
     if (isAuthenticated) {
       const namespace = 'https://sahyatri-ten.vercel.app';
       const actualRoles = user?.[`${namespace}/roles`] || [];
