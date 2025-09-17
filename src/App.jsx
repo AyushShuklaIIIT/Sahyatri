@@ -25,7 +25,7 @@ const App = () => {
       if (isAuthenticated && !isUserSynced) {
         try {
           const accessToken = await getAccessTokenSilently();
-          await fetch('http://localhost:8080/api/sync-user', {
+          await fetch('https://sahyatri-backend.vercel.app/api/sync-user', {
             method: 'POST',
             headers: {
               Authorization: `Bearer ${accessToken}`,

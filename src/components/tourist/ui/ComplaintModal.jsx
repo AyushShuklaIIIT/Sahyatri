@@ -12,15 +12,15 @@ const ComplaintModal = ({ isOpen, onClose }) => {
     const { getAccessTokenSilently } = useAuth0();
 
     useEffect(() => {
-        fetch('/data.json')
+        fetch('https://sahyatri-backend.vercel.app/fetch_loc')
             .then(res => res.json())
             .then(data => {
                 setZones(data.zones);
-                if (data.zones.length > 0) {
+                if (data.zones && data.zones.length > 0) {
                     setSelectedZone(data.zones[0].name);
                 }
             })
-            .catch(err => console.error("Failed to load zones:", err));
+            .catch(err => console.error("Failed to load zones from backend:", err));
     }, []);
 
     const handleSubmit = async (e) => {
@@ -33,7 +33,7 @@ const ComplaintModal = ({ isOpen, onClose }) => {
         setError('');
         try {
             const accessToken = await getAccessTokenSilently();
-            const response = await fetch('http://localhost:8080/api/complaints', {
+            const response = await fetch('https://sahyatri-backend.vercel.app/api/complaints', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
