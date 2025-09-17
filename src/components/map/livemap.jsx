@@ -7,7 +7,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useDispatch } from "react-redux";
 import { setIsInRedZone, setWarningDisplayed } from "../../store/redZoneSlice";
 
-export default function LiveMap({ mode = "both" }) {
+export default async function LiveMap({ mode = "both" }) {
   const dispatch = useDispatch();
   const { user, logout } = useAuth0();
   const mapRef = useRef(null);
@@ -19,7 +19,7 @@ export default function LiveMap({ mode = "both" }) {
   const defaultCoords = [23.217319, 77.408748];
 
   
-  const locator = L.icon({
+  const locator = await L.icon({
     iconUrl: 'https://img.favpng.com/9/8/10/computer-icons-google-maps-locator-map-png-favpng-QV6Yi1hU8xM0Khsb8Tdks04Ur.jpg',          // path relative to public
     iconSize: [32, 32],                 // size of the icon in pixels
     iconAnchor: [16, 32],               // point of the icon which will correspond to marker's location
