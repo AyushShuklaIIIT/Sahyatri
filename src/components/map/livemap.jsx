@@ -1,4 +1,3 @@
-'use client'
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -47,7 +46,7 @@ export default function LiveMap({ mode = "both" }) {
 
   useEffect(() => {
     const map = leafletMapRef.current;
-    if (!map || !navigator.geolocation) return;
+    if (!map || !navigator.geolocation || !locator) return;
 
     const userMarker = L.marker(defaultCoords, {icon: locator}).addTo(map).bindPopup("You are here");
     const accuracyCircle = L.circle(defaultCoords, { radius: 0 }).addTo(map);
@@ -96,7 +95,6 @@ export default function LiveMap({ mode = "both" }) {
         if(!insideRed) {
           dispatch(setWarningDisplayed(false));
         }
-
         // **Focus only once** on user location
         if (!focusRef.current) {
           map.setView([lat, lng], 13);
@@ -185,41 +183,6 @@ export default function LiveMap({ mode = "both" }) {
       }
     }
   }, [data, mode]);
-
-  // User location tracking
-  useEffect(() => {
-    const map = leafletMapRef.current;
-    if (!map || !navigator.geolocation) return;
-
-    const userMarker = L.marker(defaultCoords, {icon: locator}).addTo(map).bindPopup("You are here");
-    const accuracyCircle = L.circle(defaultCoords, { radius: 0 }).addTo(map);
-
-    const watchId = navigator.geolocation.watchPosition(
-      async (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        const acc = pos.coords.accuracy;
-
-        const res = await axios.post(
-          `https://sahyatri-backend.vercel.app/update_co`,
-          { name : user.name, lat, lng}
-        );
-
-        userMarker.setLatLng([lat, lng]);
-        accuracyCircle.setLatLng([lat, lng]).setRadius(acc);
-
-        // **Focus only once** on user location
-        if (!focusRef.current) {
-          map.setView([lat, lng], 13);
-          focusRef.current = true;
-        }
-      },
-      console.error,
-      { enableHighAccuracy: true }
-    );
-
-    return () => navigator.geolocation.clearWatch(watchId);
-  }, []);
 
   return <div ref={mapRef} style={{ width: "100%", height: "100%" }}></div>;
 }
