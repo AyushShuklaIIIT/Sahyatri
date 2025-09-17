@@ -3,17 +3,17 @@
   "access_level": "Choose your access level",
   "select_language": "Select Language",
   "tourist": {
-    "title": "Tourist",
+    "title": "Login as Tourist",
     "description": "Personal safety & emergency assistance"
   },
   "authority": {
-    "title": "Authority",
+    "title": "Login as Authority",
     "description": "Police, Tourism Dept & Emergency Response"
   },
   "tags": {
-    "digital_id": "Digital ID",
+    "digital_id": "Maps",
     "panic_button": "Panic Button",
-    "e-fir": "E-FIR",
+    "e-fir": "Zones",
     "monitoring": "Monitoring"
   },
   "profile": {
