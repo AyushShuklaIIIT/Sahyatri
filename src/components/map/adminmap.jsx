@@ -3,7 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 
-export default function AdminMap() {
+export default async function AdminMap() {
   const mapRef = useRef(null);
   const leafletMapRef = useRef(null);
   const markersRef = useRef([]);
@@ -12,7 +12,7 @@ export default function AdminMap() {
   const [zones, setZones] = useState([]);
   const [places, setPlaces] = useState([]);
 
-  const locator = L.icon({
+  const locator = await L.icon({
     iconUrl: 'https://img.favpng.com/9/8/10/computer-icons-google-maps-locator-map-png-favpng-QV6Yi1hU8xM0Khsb8Tdks04Ur.jpg',          // path relative to public
     iconSize: [32, 32],                 // size of the icon in pixels
     iconAnchor: [16, 32],               // point of the icon which will correspond to marker's location
