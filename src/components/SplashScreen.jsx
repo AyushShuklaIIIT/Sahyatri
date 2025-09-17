@@ -11,7 +11,7 @@ function SplashScreen({
   useEffect(() => {
     const timer = setTimeout(() => {
       onFinish();
-    }, 5000);
+    }, 3000);
     return () => clearTimeout(timer);
   }, [onFinish]);
 
@@ -34,7 +34,7 @@ function SplashScreen({
         }}
         initial={{ opacity: 1 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0, transition: { duration: 1 } }}
+        exit={{ opacity: 0, transition: { duration: 0.5 } }}
       >
         {/* Logo appears at center, then moves up */}
         <motion.img
@@ -43,7 +43,7 @@ function SplashScreen({
           style={{ width: "150px", marginBottom: "10px"}}
           initial={{ y: 0, opacity: 0 }}
           animate={{ y: -100, opacity: 1 }}
-          transition={{ delay: 1, duration: 1.5, ease: "easeInOut" }}
+          transition={{ delay: 0.5, duration: 1, ease: "easeInOut" }}
         />
 
         {/* Second image fades in below logo */}
@@ -53,7 +53,7 @@ function SplashScreen({
           style={{ width: "400px", marginTop: "5px", opacity: 0 }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2.5, duration: 1 }}
+          transition={{ delay: 1.5, duration: 0.75 }}
         />
       </motion.div>
     </AnimatePresence>

@@ -36,9 +36,6 @@ const TouristDashboard = ({ user }) => {
         setWarningSound(audio);
     }, []);
 
-    // This is just a dummy button to test the warning screen. Remove it after successfully implementing the geofencing logic.
-    const toggleWarning = () => setIsInRedZone(prev => !prev);
-
     if (!user) {
         return (
             <div className='flex items-center justify-center min-h-screen'>
@@ -87,8 +84,6 @@ const TouristDashboard = ({ user }) => {
                 {/* Bottom Navigation */}
                 <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
-
-            <button onClick={toggleWarning} className='fixed bottom-24 left-5 bg-yellow-400 text-black px-3 py-2 rounded-lg shadow-lg z-40 text-xs font-bold'>Test Warning</button>
 
             {/* Panic Modal */}
             <AnimatePresence>

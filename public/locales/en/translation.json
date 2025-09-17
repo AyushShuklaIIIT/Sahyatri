@@ -33,7 +33,7 @@
   "alerts": {
     "title": "Notifications",
     "danger_title": "Safety Warning",
-    "danger_message": "You are entering a restricted high-risk zone. Please avoid this area.",
+    "danger_message": "You are entering a restricted high-risk zone. Please avoid this area due to danger of lions.",
     "weather_title": "Weather Update",
     "weather_message": "Moderate rainfall expected in the afternoon. Plan your travel accordingly.",
     "info_title": "Event Information",

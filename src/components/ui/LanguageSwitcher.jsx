@@ -14,7 +14,7 @@ const LanguageSwitcher = () => {
   ];
 
   return (
-    <div className='p-4 bg-gray-50 rounded-2xl'>
+    <div className='p-4 bg-gray-50 rounded-2xl shadow-lg'>
       <p className='text-sm font-medium text-gray-700 mb-3 flex items-center'>
         <Globe className="w-4 h-4 mr-2" />
         {t('select_language')}
